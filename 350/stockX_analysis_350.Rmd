@@ -12,6 +12,7 @@ knitr::opts_chunk$set(echo = TRUE)
 library(tidyverse)
 library(dplyr)
 library(ggplot2)
+library(janitor)
 library(here)
 library(gridExtra)
 
@@ -107,7 +108,6 @@ stockX_retail_graph_350
 
 #
 ```{r}
-grid.arrange(stockX_resell_graph_350, stockX_retail_graph_350, ncol = 1)
-
+grid.arrange(stockX_resell_graph_350, stockX_retail_graph_350, ncol=1)
 ```
 

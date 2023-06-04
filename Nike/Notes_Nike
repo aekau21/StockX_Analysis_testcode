@@ -1,0 +1,8 @@
+Goal:
+Create a visual displaying Nike sales throughout the year. 
+
+graph: geom_historgram() or geom_point() - include facetwrap?, quantile?, size, color, 
+
+loaded plotyl to make the graph interactive. 
+-used geom_point(), with Order.Date on the x-axis and Sale.Price on the y-axis,  colored by Sneaker.Name, and facetwrap(~) by Sneaker.Name to give each shoe    its own grid
+- used ggplotly() to make the graph interactive to see specific dates and       prices for each sneaker
