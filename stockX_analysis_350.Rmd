@@ -1,0 +1,113 @@
+---
+title: "stockX_analysis_1"
+author: "Anson"
+date: "2023-06-03"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+
+#Import Libraries
+library(tidyverse)
+library(dplyr)
+library(ggplot2)
+library(janitor)
+library(here)
+library(gridExtra)
+
+```
+
+#Load in Data Frame, using read.csv(), and here() fucntion
+```{r}
+stockX_data <- read.csv(here("StockX-Data-Contest-2019-3.csv"))
+
+```
+
+#Find unique values of Brand column in df, using unique() function
+```{r}
+unique(stockX_data$Brand)
+
+```
+
+#Find number of unique values in brand column, using table() function
+```{r}
+table(stockX_data$Brand)
+
+```
+
+#Select Yeezy 350 models by index using the grep() function, grep returns the index. Select 350 by using splice() fucntion with the saved index Yeezy_350
+```{r}
+Yeezy_350 <- grep("350", stockX_data$Sneaker.Name)
+
+stockX_data <- stockX_data %>%
+  slice(Yeezy_350)
+
+tail(stockX_data) #checks to see if last obsv contain 350
+
+```
+
+#Use unique() fucntion and table() fucntion to check which 350 models are in the df
+```{r}
+unique(stockX_data$Sneaker.Name)
+table(stockX_data$Sneaker.Name)
+```
+
+#Select relevant columns:[3]Sneaker.Name, [4]Sale.Price, [5]Retail.Price using select() function. Arrnage using arrange() function
+```{r}
+stockX_data <- stockX_data %>%
+  select(Sneaker.Name, Sale.Price, Retail.Price) %>%
+  arrange(Sneaker.Name)
+
+```
+
+#Remove" $ "and" , " from the sales price and retail price column using gsub() funtion. Convert class of Sales.Price and Retail.Price column. "charachter" to "numeric".using as.numeric() function
+```{r}
+
+stockX_data$Sale.Price <- gsub("\\$", "", stockX_data$Sale.Price)
+stockX_data$Sale.Price <- gsub("\\,", "", stockX_data$Sale.Price)
+stockX_data$Retail.Price <- gsub("\\$", "", stockX_data$Retail.Price)
+
+stockX_data$Sale.Price <- as.numeric(stockX_data$Sale.Price)
+stockX_data$Retail.Price <- as.numeric(stockX_data$Retail.Price)
+
+```
+
+#Use group_by() function and gorup by Sneaker.Name to refine obersavtions and use summarize() function and sum() function to caluclate total resell price and total retail price
+```{r}
+stockX_data <- stockX_data %>%
+  group_by(Sneaker.Name) %>%
+  summarize(Total.Resell.Price = sum(Sale.Price), Total.Retail.Price = sum(Retail.Price))
+
+```
+
+#Graph of Total Resell Price using geom_col()
+```{r}
+stockX_resell_graph_350 <- ggplot(data = stockX_data, aes(Sneaker.Name, Total.Resell.Price))+
+  geom_col() +
+  theme_classic()+
+  coord_flip() +
+  scale_y_continuous(labels = scales::comma_format()) +
+  geom_text(aes(label = Total.Resell.Price), hjust = -0.05, size = 3)+
+  labs(y = "Total Resell Price", x = "Colorway", title = "StockX Sales 2019", subtitle = "Adidas Yeezy Boost 350") 
+
+stockX_resell_graph_350
+```
+#Graph of Total Retail Price using geom_col()
+```{r}
+stockX_retail_graph_350 <- ggplot(data = stockX_data, aes(Sneaker.Name, Total.Retail.Price))+
+  geom_col() +
+  theme_classic()+
+  coord_flip() +
+  scale_y_continuous(labels = scales::comma_format()) +
+  geom_text(aes(label = Total.Resell.Price), hjust = -0.05, size = 3)+
+  labs(y = "Total Retail Price", x = "Colorway", title = "StockX Sales 2019", subtitle = "Adidas Yeezy Boost 350") 
+
+stockX_retail_graph_350
+```
+
+#
+```{r}
+grid.arrange(stockX_resell_graph_350, stockX_retail_graph_350, ncol=1)
+```
+

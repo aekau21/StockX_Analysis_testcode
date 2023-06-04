@@ -1,0 +1,67 @@
+---
+title: "notes"
+output: html_notebook
+---
+
+Goal for stockX_analysis_1:
+create a visual displaying and comparing sales for Yeezy 350 boost models
+
+how to achieve the visual:
+- filter the data set to find 350 models
+- find the unique values of 350 models
+- combine the multiple of unique values 
+- graph it 
+
+
+
+
+
+
+10:53
+current goal: 
+combine the multiple unique values of 350 boost, 
+
+there are 20:
+[1] "Adidas-Yeezy-Boost-350-Low-V2-Beluga"         
+ [2] "Adidas-Yeezy-Boost-350-V2-Core-Black-Copper"  
+ [3] "Adidas-Yeezy-Boost-350-V2-Core-Black-Green"   
+ [4] "Adidas-Yeezy-Boost-350-V2-Core-Black-Red"     
+ [5] "Adidas-Yeezy-Boost-350-V2-Core-Black-Red-2017"
+ [6] "Adidas-Yeezy-Boost-350-V2-Core-Black-White"   
+ [7] "Adidas-Yeezy-Boost-350-V2-Cream-White"        
+ [8] "Adidas-Yeezy-Boost-350-V2-Zebra"              
+ [9] "Adidas-Yeezy-Boost-350-Low-Moonrock"          
+[10] "Adidas-Yeezy-Boost-350-Low-Pirate-Black-2016" 
+[11] "Adidas-Yeezy-Boost-350-Low-Oxford-Tan"        
+[12] "Adidas-Yeezy-Boost-350-Low-Turtledove"        
+[13] "Adidas-Yeezy-Boost-350-Low-Pirate-Black-2015" 
+[14] "Adidas-Yeezy-Boost-350-V2-Semi-Frozen-Yellow" 
+[15] "Adidas-Yeezy-Boost-350-V2-Beluga-2pt0"        
+[16] "Adidas-Yeezy-Boost-350-V2-Blue-Tint"          
+[17] "adidas-Yeezy-Boost-350-V2-Butter"             
+[18] "Adidas-Yeezy-Boost-350-V2-Sesame"             
+[19] "adidas-Yeezy-Boost-350-V2-Static"             
+[20] "adidas-Yeezy-Boost-350-V2-Static-Reflective"
+
+looking at the data frame the columns I want to keep are:
+[2] Brand, [3]Sneaker.Name, [4]Sale.Price, [5]Retail.Price
+- removed brand. Its unnecessary
+
+10:58
+selected the relevant columns. 
+goal: combine the unique values
+  - combine Unique sneaker.names, mutate? or summarize?
+  - calculate Unique sale.price, sum()function
+  - calculate Unique retail.price, sum() function
+
+11:40
+use group_by() on sneaker.names column
+use summarize()to create new columns total resell price and total retail price. 
+
+12:09 
+used gsub() function to remove the characters to convert the sales and retail columns to numeric using the as.numeric() function
+next is graphing the refined data frame
+
+2:49 
+graph total resell and total retail prices using geom_col()
+used grid.arrange() to compare the graphs
