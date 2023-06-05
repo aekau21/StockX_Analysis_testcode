@@ -99,7 +99,7 @@ stockX_retail_graph_350 <- ggplot(data = stockX_data, aes(Sneaker.Name, Total.Re
   theme_classic()+
   coord_flip() +
   scale_y_continuous(labels = scales::comma_format()) +
-  geom_text(aes(label = Total.Resell.Price), hjust = -0.05, size = 3)+
+  geom_text(aes(label = Total.Retail.Price), hjust = -0.05, size = 3)+
   labs(y = "Total Retail Price", x = "Colorway", title = "StockX Sales 2019", subtitle = "Adidas Yeezy Boost 350") 
 
 stockX_retail_graph_350
