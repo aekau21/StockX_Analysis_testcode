@@ -14,6 +14,7 @@ library(dplyr)
 library(ggplot2)
 library(here)
 library(gridExtra)
+library(plotly)
 
 ```
 
@@ -109,5 +110,47 @@ stockX_retail_graph_350
 ```{r}
 grid.arrange(stockX_resell_graph_350, stockX_retail_graph_350, ncol = 1)
 
+```
+
+
+
+
+
+
+
+#Line graph price/date
+
+#rename, filter() by Brand to select Yeezy, select() relevant columns, Order.Date, Sneaker.Name, Sale.Price
+```{r}
+stockX_yeezy_pd <- stockX_data %>%
+  filter(Brand == " Yeezy") %>%
+  select(Order.Date, Sneaker.Name, Sale.Price)
+
+```
+
+#Use gsub() to remove $ and ,. Then use as.numeric() to convert the Sale.Price category to numeric. 
+```{r}
+stockX_yeezy_pd$Sale.Price <- gsub("\\$|\\,", "", stockX_yeezy_pd$Sale.Price)
+stockX_yeezy_pd$Sale.Price <- as.numeric(stockX_yeezy_pd$Sale.Price)
+stockX_yeezy_pd$Order.Date <- mdy(stockX_yeezy_pd$Order.Date)
+stockX_yeezy_pd$Sneaker.Name <- gsub("\\$|\\,", "", stockX_yeezy_pd$Sale.Price)
+```
+
+#Filter() Order.Date for time period of two weeks before Christmas using operators <=, >=, &
+```{r}
+stockX_yeezy_pd <- stockX_yeezy_pd %>%
+  filter(Order.Date >= "2018-12-13" & Order.Date <= "2018-12-24" )
+  
+```
+
+#Use ggplot() to create a line graph, geom_line(). Similiar to Nike graph usuing facet_wrap() and ggplotly()
+```{r}
+yeezy_graph <- ggplot(stockX_yeezy_pd, aes(x = Order.Date, y = Sale.Price, color = Sneaker.Name)) +
+  geom_line() +
+  labs(x = "Order Date", y = "Sale Price", title = "Yeezy Sales 2 Weeks before Christmas") +
+  facet_wrap(~Sneaker.Name)
+
+interactive_yeezy_graph <- ggplotly(yeezy_graph)
+interactive_yeezy_graph
 ```
 
