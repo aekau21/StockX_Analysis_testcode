@@ -83,6 +83,8 @@ stockX_data <- stockX_data %>%
 
 
 #Graph of Total Resell Price using geom_col()
+
+#Updated graph, added geom_col(aes for Total.Retail.Price and Total.Resell.Price) This allows for a stacked graph rather than the grid.arrange() scale_fill_manual() sets color
 ```{r}
 stockX_resell_graph_350 <- ggplot(data = stockX_data, aes(Sneaker.Name))+
   geom_col(aes(y = Total.Resell.Price, fill = "Total.Resell.Price"), position = "stack") +
@@ -124,6 +126,11 @@ interactive_350_graph
 
 #Line graph price/date
 
+```{r}
+stockX_data <- read.csv(here("StockX-Data-Contest-2019-3.csv"))
+
+```
+
 #rename, filter() by Brand to select Yeezy, select() relevant columns, Order.Date, Sneaker.Name, Sale.Price
 ```{r}
 stockX_yeezy_pd <- stockX_data %>%
@@ -137,7 +144,7 @@ stockX_yeezy_pd <- stockX_data %>%
 stockX_yeezy_pd$Sale.Price <- gsub("\\$|\\,", "", stockX_yeezy_pd$Sale.Price)
 stockX_yeezy_pd$Sale.Price <- as.numeric(stockX_yeezy_pd$Sale.Price)
 stockX_yeezy_pd$Order.Date <- mdy(stockX_yeezy_pd$Order.Date)
-stockX_yeezy_pd$Sneaker.Name <- gsub("\\$|\\,", "", stockX_yeezy_pd$Sale.Price)
+#stockX_yeezy_pd$Sneaker.Name <- gsub("\\$|\\,", "", stockX_yeezy_pd$Sale.Price)
 ```
 
 #Filter() Order.Date for time period of two weeks before Christmas using operators <=, >=, &
@@ -158,3 +165,41 @@ interactive_yeezy_graph <- ggplotly(yeezy_graph)
 interactive_yeezy_graph
 ```
 
+
+
+
+
+
+
+#OG: Visual of only the V1 350
+```{r}
+stockX_data <- read.csv(here("StockX-Data-Contest-2019-3.csv"))
+
+```
+
+#Filter() Brand, and use &, use !grepl() to select everything but V2 and select() the relevant columns
+```{r}
+#stockX_V2_el <- grep("V2", stockX_data$Sneaker.Name)
+
+#stockX_V2 <- stockX_data %>%
+#  slice(stockX_V2_el) 
+#stockX_V2
+
+stockX_V1 <- stockX_data %>%
+  filter(Brand == " Yeezy" & !grepl("V2", stockX_data$Sneaker.Name)) %>%
+  select(Sneaker.Name, Sale.Price, Buyer.Region)
+
+stockX_V1$Sale.Price <- gsub("\\$|\\,", "", stockX_V1$Sale.Price)
+stockX_V1$Sale.Price <- as.numeric(stockX_V1$Sale.Price)
+
+```
+
+#scatter plot with fill by buyer region. geom_point(), fill = Buyer.Region
+```{r}
+V1_graph <- ggplot(stockX_V1, aes(x = Buyer.Region, y = Sale.Price, color = Buyer.Region, fill = Sneaker.Name, size = Sale.Price)) +
+  geom_point()+
+  theme(axis.text.x = element_text(angle = 90, hjust =1))+
+  labs(x = "Colorway", y = "Resell Price", title = "V1 Sales per State")
+
+V1_graph
+```
