@@ -81,34 +81,38 @@ stockX_data <- stockX_data %>%
 
 ```
 
+
 #Graph of Total Resell Price using geom_col()
 ```{r}
-stockX_resell_graph_350 <- ggplot(data = stockX_data, aes(Sneaker.Name, Total.Resell.Price))+
-  geom_col() +
-  theme_classic()+
+stockX_resell_graph_350 <- ggplot(data = stockX_data, aes(Sneaker.Name))+
+  geom_col(aes(y = Total.Resell.Price, fill = "Total.Resell.Price"), position = "stack") +
+  geom_col(aes(y = Total.Retail.Price, fill = "Total.Retail.Price"), position = "stack") +
+  scale_fill_manual(values = c("Total.Retail.Price" = "blue", "Total.Resell.Price" = "forestgreen")) +
   coord_flip() +
   scale_y_continuous(labels = scales::comma_format()) +
-  geom_text(aes(label = Total.Resell.Price), hjust = -0.05, size = 3)+
-  labs(y = "Total Resell Price", x = "Colorway", title = "StockX Sales 2019", subtitle = "Adidas Yeezy Boost 350") 
+  #geom_text(aes(label = Total.Resell.Price), hjust = -0.05, size = 3)+
+  labs(y = "Price", x = "Colorway", title = "StockX Sales 2019", subtitle = "Adidas Yeezy Boost 350") 
 
-stockX_resell_graph_350
+interactive_350_graph <- ggplotly(stockX_resell_graph_350)
+interactive_350_graph
+
 ```
 #Graph of Total Retail Price using geom_col()
 ```{r}
-stockX_retail_graph_350 <- ggplot(data = stockX_data, aes(Sneaker.Name, Total.Retail.Price))+
-  geom_col() +
-  theme_classic()+
-  coord_flip() +
-  scale_y_continuous(labels = scales::comma_format()) +
-  geom_text(aes(label = Total.Retail.Price), hjust = -0.05, size = 3)+
-  labs(y = "Total Retail Price", x = "Colorway", title = "StockX Sales 2019", subtitle = "Adidas Yeezy Boost 350") 
+#stockX_retail_graph_350 <- ggplot(data = stockX_data, aes(Sneaker.Name, Total.Retail.Price))+
+ # geom_col() +
+#  theme_classic()+
+#  coord_flip() +
+#  scale_y_continuous(labels = scales::comma_format()) +
+#  geom_text(aes(label = Total.Retail.Price), hjust = -0.05, size = 3)+
+#  labs(y = "Total Retail Price", x = "Colorway", title = "StockX Sales 2019", subtitle = "Adidas Yeezy Boost 350") 
 
-stockX_retail_graph_350
+#stockX_retail_graph_350
 ```
 
 #
 ```{r}
-grid.arrange(stockX_resell_graph_350, stockX_retail_graph_350, ncol = 1)
+#grid.arrange(stockX_resell_graph_350, stockX_retail_graph_350, ncol = 1)
 
 ```
 
