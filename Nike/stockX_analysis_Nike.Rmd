@@ -19,7 +19,7 @@ library(plotly)
 
 #Load in Data Frame, using read.csv(), and here() fucntion
 ```{r}
-stockX_data <- read.csv(here("StockX-Data-Contest-2019-3.csv"))
+stockX_data <- read.csv(here("data/StockX-Data-Contest-2019-3.csv"))
 
 ```
 

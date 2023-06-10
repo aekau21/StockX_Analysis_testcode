@@ -20,7 +20,7 @@ library(plotly)
 
 #Load in Data Frame, using read.csv(), and here() fucntion
 ```{r}
-stockX_data <- read.csv(here("StockX-Data-Contest-2019-3.csv"))
+stockX_data <- read.csv(here("data/StockX-Data-Contest-2019-3.csv"))
 
 ```
 
@@ -127,7 +127,7 @@ interactive_350_graph
 #Line graph price/date
 
 ```{r}
-stockX_data <- read.csv(here("StockX-Data-Contest-2019-3.csv"))
+stockX_data <- read.csv(here("data/StockX-Data-Contest-2019-3.csv"))
 
 ```
 
@@ -173,7 +173,7 @@ interactive_yeezy_graph
 
 #OG: Visual of only the V1 350
 ```{r}
-stockX_data <- read.csv(here("StockX-Data-Contest-2019-3.csv"))
+stockX_data <- read.csv(here("data/StockX-Data-Contest-2019-3.csv"))
 
 ```
 
