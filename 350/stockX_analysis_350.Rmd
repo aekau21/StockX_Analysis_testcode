@@ -26,13 +26,13 @@ stockX_data <- read.csv(here("StockX-Data-Contest-2019-3.csv"))
 
 #Find unique values of Brand column in df, using unique() function
 ```{r}
-unique(stockX_data$Brand)
+#unique(stockX_data$Brand)
 
 ```
 
 #Find number of unique values in brand column, using table() function
 ```{r}
-table(stockX_data$Brand)
+#table(stockX_data$Brand)
 
 ```
 
@@ -43,14 +43,14 @@ Yeezy_350 <- grep("350", stockX_data$Sneaker.Name)
 stockX_data <- stockX_data %>%
   slice(Yeezy_350)
 
-tail(stockX_data) #checks to see if last obsv contain 350
+#tail(stockX_data) #checks to see if last obsv contain 350
 
 ```
 
 #Use unique() fucntion and table() fucntion to check which 350 models are in the df
 ```{r}
-unique(stockX_data$Sneaker.Name)
-table(stockX_data$Sneaker.Name)
+#unique(stockX_data$Sneaker.Name)
+#table(stockX_data$Sneaker.Name)
 ```
 
 #Select relevant columns:[3]Sneaker.Name, [4]Sale.Price, [5]Retail.Price using select() function. Arrnage using arrange() function
@@ -199,7 +199,7 @@ stockX_V1$Sale.Price <- as.numeric(stockX_V1$Sale.Price)
 V1_graph <- ggplot(stockX_V1, aes(x = Buyer.Region, y = Sale.Price, color = Sneaker.Name, size = Sale.Price)) +
   geom_point()+
   theme(axis.text.x = element_text(angle = 90, hjust =1))+
-  labs(x = "State", y = "Resell Price", title = "V1 Sales per State", color = "Colorway Name and Sale Price")
+  labs(x = "State", y = "Resell Price", title = "V1 Sales per State", color = "Colorway Name", size = "")
 
 interactive_V1 <- ggplotly(V1_graph)
 interactive_V1

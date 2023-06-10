@@ -55,3 +55,45 @@ interactive_nike_graph <- ggplotly(nike_graph)
 interactive_nike_graph
 ```
 
+
+
+
+
+
+
+#Filter() for Jordan 1 Uni Blue, select() relevant columns
+```{r}
+stockX_data_nike2 <- stockX_data %>%
+  filter(Sneaker.Name == "Air-Jordan-1-Retro-High-Off-White-University-Blue") %>% 
+  select(Sneaker.Name, Order.Date, Release.Date, Sale.Price)
+
+```
+
+#remove charachters using gsub(), convert class using as.numeric() and mdy() for date columns
+```{r}
+stockX_data_nike2$Sale.Price <- gsub("\\$|\\,", "", stockX_data_nike2$Sale.Price)
+
+stockX_data_nike2$Sale.Price <- as.numeric(stockX_data_nike2$Sale.Price)
+
+stockX_data_nike2$Release.Date <- mdy(stockX_data_nike2$Release.Date)
+stockX_data_nike2$Order.Date <- mdy(stockX_data_nike2$Order.Date)
+```
+
+#filter() for 3 month range
+```{r}
+stockX_data_nike2 <- stockX_data_nike2 %>%
+  filter(Order.Date >= "2018-06-23" & Order.Date <= "2018-09-23") %>%
+  select(Sneaker.Name, Order.Date, Sale.Price)
+```
+
+#visualize the graph using scatterplot geom_point
+```{r}
+nike_j1unc_graph <- ggplot(stockX_data_nike2, aes(Order.Date, Sale.Price)) +
+  geom_point(color = "lightblue") +
+  geom_smooth()+
+  labs(x = "Order Date", y = "Resell Price", title = "Air Jordan 1 Off-White Univeristy Blues Sales", subtitle = "3 Month Range")+
+ theme(plot.title = element_text(hjust = 0.5), plot.subtitle = element_text(hjust = 0.5))
+nike_j1unc_graph
+```
+
+
