@@ -1,0 +1,34 @@
+---
+title: "stockX_cleaning"
+author: "Anson Ekau"
+date: "2023-11-04"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+library(tidyverse)
+library(here)
+library(lubridate)
+```
+
+```{r}
+sX_data <- read.csv(here("data/StockX-Data-Contest-2019-3.csv"))
+```
+
+```{r}
+sX_data$Order.Date <- mdy(sX_data$Order.Date)
+sX_data$Release.Date <- mdy(sX_data$Release.Date)
+
+sX_data$Sale.Price <- gsub("\\$|\\,", "", sX_data$Sale.Price)
+sX_data$Retail.Price <- gsub("\\$|\\,", "", sX_data$Retail.Price)
+
+sX_data$Sale.Price <- as.numeric(sX_data$Sale.Price)
+sX_data$Retail.Price <- as.numeric(sX_data$Retail.Price)
+
+```
+
+```{r}
+write_csv(sX_data, "data/sX_data.csv")
+```
+
