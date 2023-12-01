@@ -20,7 +20,7 @@ library(plotly)
 #Load in Data Frame, using read.csv(), and here() fucntion
 ```{r}
 stockX_data <- read.csv(here("data/StockX-Data-Contest-2019-3.csv"))
-
+read.tsv
 ```
 
 #Filter() by Brand to select Nike. Select() to choose Sneaker.Name, Order.Date, Sale.Price
@@ -94,6 +94,10 @@ nike_j1unc_graph <- ggplot(stockX_data_nike2, aes(Order.Date, Sale.Price)) +
   labs(x = "Order Date", y = "Resell Price", title = "Air Jordan 1 Off-White Univeristy Blues Sales", subtitle = "3 Month Range")+
  theme(plot.title = element_text(hjust = 0.5), plot.subtitle = element_text(hjust = 0.5))
 nike_j1unc_graph
+```
+
+```{r}
+
 ```
 
 

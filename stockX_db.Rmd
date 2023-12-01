@@ -1,0 +1,397 @@
+---
+title: "StockX Data-Analysis"
+output: 
+  flexdashboard::flex_dashboard:
+    theme:
+      bg: "white"
+      fg: "black" 
+      primary: "#296e01"
+      base_font:
+        google: Prompt
+      code_font:
+        google: JetBrains Mono
+    orientation: row
+    vertical_layout: scroll
+#runtime: shiny
+---
+
+```{r setup, include=FALSE}
+library(flexdashboard)
+library(here)
+library(tidyverse)
+library(plotly)
+library(leaflet)
+library(rvest)
+library(mapview)
+#library(thematic)
+#library(bslib)
+#library(rsconnect)
+#library(shiny)
+# Install thematic and un-comment for themed static plots (i.e., ggplot2)
+# thematic::thematic_rmd()
+
+options(scipen = 99)
+```
+
+```{r include=FALSE}
+all_data <- read.csv(here("data/sX_data.csv"))
+```
+
+```{r include=FALSE}
+url <- "https://www.latlong.net/category/states-236-14.html"
+html_code <- read_html(url) 
+table_html <- html_code %>% html_nodes("table") %>% .[[1]] 
+state_coordinates <- table_html %>% html_table() 
+
+state_coordinates <- state_coordinates %>% 
+  rename(Buyer.Region = `Place Name`)
+
+state_coordinates$Buyer.Region <- gsub("\\,|\\ USA|\\ the US| the USA","", state_coordinates$Buyer.Region)
+#head(state_coordinates)
+
+doc <- data.frame(
+  Buyer.Region = "District of Columbia",
+  Longitude =  -77.03667,
+  Latitude = 38.895
+)
+
+state_coordinates <- bind_rows(state_coordinates, doc)
+```
+
+```{r include=FALSE}
+all_data <- all_data %>% 
+  full_join(state_coordinates, by = "Buyer.Region")
+```
+
+Home
+===============================================================================
+<div style="text-align:center;">
+  <img src="stockx.png" alt="Kanewai Spring" style="width 800px; height: 300px;"/>
+</div>
+### Problem
+The following visuals attempt to analyze sneaker resell data from StockX for the year of 2019. Each visual answers a differnt question to understand buying habits. 
+
+### Visual Guide
+
+Visual 1
+
+- Viz 1 is a series of bar charts that show the resell sales for each sneaker model
+- Question: Which sneakers had the highest combined resell prices for the enitre year?
+
+Visual 2
+
+- Viz 2 is a map of the USA displaying the total number of shoes sold per state
+- Question: Which states purchase the most shoes?
+
+Visual 3
+
+- Viz 3 is a series of scatter plots that show the total number of sales per shoe size. 
+- Question:
+Which shoe sizes have the highest total resell prices?
+
+Row
+--------------------------------------------------------------------------------
+
+### OFF-WHITE
+<div style="text-align:center;">
+  <img src="virgil.jpg" alt="Virgil Abloh Off-White" style="width 650px; height: 350px;"/>
+</div>
+
+Brand Name:
+OFF-WHITE
+
+- Founder: Virgil Abloh
+- Founded: 2012 Milan, Italy
+
+
+
+### Yeezy
+<div style="text-align:center;">
+  <img src="kanye.png" alt="Kanye West Yeezy" style="width 650px; height: 350px;"/>
+</div>
+
+Brand Name:
+Yeezy
+
+- Founder: Kanye West
+- Collaboration: 2015
+
+
+NikexOff-White
+===============================================================================
+<div style="text-align:center;">
+  <img src="nikexoffwhite.png" alt="NikexOFF-WHITE" style="width: 1500px; height: 500px;"/>
+</div>
+Row {data-width=2000 .tabset}
+----------------------------------------------------------------------
+### Air Jordan 1
+```{r include=FALSE}
+j <- all_data %>% 
+  filter(Brand == "Off-White" & grepl("Jordan", all_data$Sneaker.Name)) %>% 
+  select(Brand, Sneaker.Name, Sale.Price) %>% 
+  group_by(Sneaker.Name) %>% 
+  mutate(Total.Resell = sum(Sale.Price))
+```
+
+```{r echo=FALSE}
+j_graph <- ggplot(j, aes(x = Sneaker.Name, y = Total.Resell)) +
+  geom_col() +
+  coord_flip() +
+  labs(title = "Off-WhitexAir Jordan 1", subtitle = "Resell Sales $", x = "Model Name", y = "Total Sales")
+
+ggplotly(j_graph)
+```
+
+### Air Max
+```{r include=FALSE}
+m <- all_data %>% 
+  filter(Brand == "Off-White" & grepl("Max", all_data$Sneaker.Name)) %>% 
+  select(Brand, Sneaker.Name, Sale.Price) %>% 
+  group_by(Sneaker.Name) %>% 
+  mutate(Total.Resell = sum(Sale.Price))
+```
+
+```{r echo=FALSE}
+m_graph <- ggplot(m, aes(x = Sneaker.Name, y = Total.Resell)) +
+  geom_col() +
+  coord_flip() +
+  labs(title = "Off-WhitexNike Air Max", subtitle = "Resell Sales $", x = "Model Name", y = "Total Sales")
+
+ggplotly(m_graph)
+```
+
+### Blazer
+```{r include=FALSE}
+b <- all_data %>% 
+  filter(Brand == "Off-White" & grepl("Blazer", all_data$Sneaker.Name)) %>% 
+  select(Brand, Sneaker.Name, Sale.Price) %>% 
+  group_by(Sneaker.Name) %>% 
+  mutate(Total.Resell = sum(Sale.Price))
+```
+
+```{r echo=FALSE}
+b_graph <- ggplot(b, aes(x = Sneaker.Name, y = Total.Resell)) +
+  geom_col() +
+  coord_flip() +
+  labs(title = "Off-WhitexNike Blazer", subtitle = "Resell Sales $", x = "Model Name", y = "Total Sales")
+
+ggplotly(b_graph)
+```
+Row{}
+--------------------------------------------------------------------------------
+### Sneaker Map, Total Number of Sales Per State
+```{r echo=FALSE}
+map_sales_data <- all_data %>% 
+  filter(all_data$Brand == "Off-White") %>% 
+  select(Buyer.Region, Longitude, Latitude) %>% 
+  mutate(row_number = row_number()) %>% 
+  group_by(Buyer.Region) %>% 
+  summarise(sales = n_distinct(row_number))
+
+map_sales_data <- map_sales_data %>% 
+  full_join(state_coordinates, by = "Buyer.Region") #%>% 
+  #select(!Buyer.Region)
+#sum(map_sales_data$sales)
+```
+
+```{r}
+snkrmap <- leaflet() %>% 
+  setView(lng = -96, lat = 37.8, zoom = 4) %>%
+  addTiles()
+  
+map_sales <- addCircleMarkers(
+  snkrmap,
+  data = map_sales_data,
+  lng = ~Longitude,
+  lat = ~Latitude,
+  #label = ~Buyer.Region,
+  #labelOptions(noHide = TRUE),
+  popup = ~paste("Number of Sales:", sales),
+  popupOptions = (noHide = TRUE),
+  radius = 8,
+  color = "#296e01",
+  fillOpacity = 0.7
+)
+
+map_sales
+```
+
+Row {data-width=10000 .tabset}
+--------------------------------------------------------------------------------
+### Air Jordan 1
+```{r}
+jfd <- all_data %>% 
+  filter(Brand == "Off-White" & grepl("Jordan", all_data$Sneaker.Name)) %>% 
+  select(Shoe.Size, Sale.Price, Sneaker.Name) %>% 
+  group_by(Shoe.Size, Sneaker.Name) %>% 
+  mutate(Sale.Price = sum(Sale.Price))
+
+#colors <- c("Air Jordan 1 Retro High Off White University Blue" = "lightskyblue", "Air Jordan 1 Retro High Off White Chicago" = "firebrick3", "Air Jordan 1 Retro High Off White White" = "floralwhite")
+
+jf_graph <- ggplot(jfd, aes(x = Shoe.Size, y = Sale.Price, fill = Sneaker.Name, stroke = 0.15)) +
+  geom_point() +
+  facet_wrap(~Sneaker.Name) +
+  labs(title = "Off-WhitexAir Jordan 1 Total Sales For Every Shoe Size", subtitle = "Resell Sales", x = "Shoe Size", y = "Total Sales $") +
+  scale_fill_manual(values = c("Air Jordan 1 Retro High Off White University Blue" = "lightskyblue", "Air Jordan 1 Retro High Off White Chicago" = "firebrick3", "Air Jordan 1 Retro High Off White White" = "floralwhite")) +
+  guides(fill = FALSE)
+
+jfeet <- ggplotly(jf_graph)
+jfeet
+```
+
+### Air Max
+```{r}
+mfd <- all_data %>% 
+  filter(Brand == "Off-White" & grepl("Max", all_data$Sneaker.Name)) %>% 
+  select(Shoe.Size, Sale.Price, Sneaker.Name) %>% 
+  group_by(Shoe.Size, Sneaker.Name) %>% 
+  mutate(Sale.Price = sum(Sale.Price))
+
+mf_graph <- ggplot(mfd, aes(x = Shoe.Size, y = Sale.Price, fill = Sneaker.Name, stroke = 0.15)) +
+  geom_point() +
+  facet_wrap(~Sneaker.Name, nrow = 5) +
+  labs(title = "Off-WhitexAir Max Total Sales For Every Shoe Size", subtitle = "Resell Sales", x = "Shoe Size", y = "Total Sales $") +
+  guides(fill = FALSE)
+
+mfeet <- ggplotly(mf_graph)
+mfeet
+```
+
+### Blazer
+```{r}
+bfd <- all_data %>% 
+  filter(Brand == "Off-White" & grepl("Blazer", all_data$Sneaker.Name)) %>% 
+  select(Shoe.Size, Sale.Price, Sneaker.Name, Order.Date) %>% 
+  group_by(Shoe.Size, Sneaker.Name) %>% 
+  mutate(Sale.Price = sum(Sale.Price))
+
+bf_graph <- ggplot(bfd, aes(x = Shoe.Size, y = Sale.Price, fill = Sneaker.Name, stroke = 0.15)) +
+  geom_point() +
+  facet_wrap(~Sneaker.Name) +
+  labs(title = "Off-WhitexNike Blazer Total Sales For Every Shoe Size", subtitle = "Resell Sales", x = "Shoe Size", y = "Total Sales $") +
+  guides(fill = FALSE)
+
+bfeet <- ggplotly(bf_graph)
+bfeet
+```
+
+AdidasxYeezy
+===============================================================================
+<div style="text-align:center;">
+  <img src="adidasxyeezy.png" alt="AdidasxYeezy" style="width: 1500px; height: 500px;"/>
+</div>
+Row {data-width=1000 .tabset}
+-------------------------------------------------------------------------------
+### Yeezy V1
+
+```{r include=FALSE}
+v1 <- all_data %>% 
+  filter(Brand == " Yeezy" & !grepl("V2", all_data$Sneaker.Name)) %>% 
+  select(Brand, Sneaker.Name, Sale.Price) %>% 
+  group_by(Sneaker.Name) %>% 
+  mutate(Total.Resell = sum(Sale.Price))
+```
+
+```{r echo=FALSE}
+v1_graph <- ggplot(v1, aes(x = Sneaker.Name, y = Total.Resell)) +
+  geom_col() +
+  coord_flip() +
+  labs(title = "Yeezy Boost V1", x = "Model Name", y = "Resell Price")
+
+ggplotly(v1_graph)
+```
+
+### Yeezy V2
+```{r include=FALSE}
+v2 <- all_data %>% 
+  filter(Brand == " Yeezy" & grepl("V2", all_data$Sneaker.Name)) %>% 
+  select(Brand, Sneaker.Name, Sale.Price) %>% 
+  group_by(Sneaker.Name) %>% 
+  mutate(Total.Resell = sum(Sale.Price))
+```
+
+```{r echo=FALSE}
+v2_graph <- ggplot(v2, aes(x = Sneaker.Name, y = Total.Resell)) +
+  geom_col() +
+  coord_flip() +
+  labs(title = "Yeezy Boost V2", x = "Model Name", y = "Resell Price")
+
+ggplotly(v2_graph)
+```
+
+Row
+-------------------------------------------------------------------------------
+### Sneaker Map, Total Number of Sales Per State
+```{r}
+map_sales_data2 <- all_data %>% 
+  filter(all_data$Brand == " Yeezy") %>% 
+  select(Buyer.Region, Longitude, Latitude) %>% 
+  mutate(row_number = row_number()) %>% 
+  group_by(Buyer.Region) %>% 
+  summarise(sales = n_distinct(row_number))
+
+map_sales_data2 <- map_sales_data2 %>% 
+  full_join(state_coordinates, by = "Buyer.Region") #%>% 
+  #select(!Buyer.Region)
+#sum(map_sales_data$sales)
+```
+
+```{r}
+snkrmap2 <- leaflet() %>% 
+  setView(lng = -96, lat = 37.8, zoom = 4) %>%
+  addTiles()
+  
+map_sales2 <- addCircleMarkers(
+  snkrmap2,
+  data = map_sales_data2,
+  lng = ~Longitude,
+  lat = ~Latitude,
+  #label = ~Buyer.Region,
+  #labelOptions(noHide = TRUE),
+  popup = ~paste("Number of Sales:", sales),
+  popupOptions = (noHide = TRUE),
+  radius = 8,
+  color = "#296e01",
+  fillOpacity = 0.7
+)
+
+map_sales2
+```
+
+Row {data-width=2000 .tabset}
+--------------------------------------------------------------------------------
+### Yeezy V1
+```{r}
+v1fd <- all_data %>% 
+  filter(Brand == " Yeezy" & !grepl("V2", all_data$Sneaker.Name)) %>% 
+  select(Shoe.Size, Sale.Price, Sneaker.Name) %>% 
+  group_by(Shoe.Size, Sneaker.Name) %>% 
+  mutate(Sale.Price = sum(Sale.Price))
+
+v1f_graph <- ggplot(v1fd, aes(x = Shoe.Size, y = Sale.Price, fill = Sneaker.Name, stroke = 0.15)) +
+  geom_point() +
+  facet_wrap(~Sneaker.Name) +
+  labs(title = "Adidas Yeezy Boost V1 Total Sales For Every Shoe Size", subtitle = "Resell Sales", x = "Shoe Size", y = "Total Sales $") +
+  guides(fill = FALSE)
+
+v1feet <- ggplotly(v1f_graph)
+v1feet
+```
+
+### Yeezy V2
+```{r}
+v2fd <- all_data %>% 
+  filter(Brand == " Yeezy" & grepl("V2", all_data$Sneaker.Name)) %>% 
+  select(Shoe.Size, Sale.Price, Sneaker.Name) %>% 
+  group_by(Shoe.Size, Sneaker.Name) %>% 
+  mutate(Sale.Price = sum(Sale.Price))
+
+v2f_graph <- ggplot(v2fd, aes(x = Shoe.Size, y = Sale.Price, fill = Sneaker.Name, stroke = 0.15)) +
+  geom_point() +
+  facet_wrap(~Sneaker.Name, nrow = 5) +
+  labs(title = "Adidas Yeezy Boost V2 Total Sales For Every Shoe Size", subtitle = "Resell Sales", x = "Shoe Size", y = "Total Sales $") +
+  guides(fill = FALSE)
+
+v2feet <- ggplotly(v2f_graph)
+v2feet
+```

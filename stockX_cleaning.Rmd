@@ -26,6 +26,7 @@ sX_data$Retail.Price <- gsub("\\$|\\,", "", sX_data$Retail.Price)
 sX_data$Sale.Price <- as.numeric(sX_data$Sale.Price)
 sX_data$Retail.Price <- as.numeric(sX_data$Retail.Price)
 
+sX_data$Sneaker.Name <- gsub("\\-", " ", sX_data$Sneaker.Name)
 ```
 
 ```{r}

@@ -26,13 +26,13 @@ stockX_data <- read.csv(here("data/StockX-Data-Contest-2019-3.csv"))
 
 #Find unique values of Brand column in df, using unique() function
 ```{r}
-#unique(stockX_data$Brand)
+unique(stockX_data$Brand)
 
 ```
 
 #Find number of unique values in brand column, using table() function
 ```{r}
-#table(stockX_data$Brand)
+table(stockX_data$Brand)
 
 ```
 
@@ -49,8 +49,8 @@ stockX_data <- stockX_data %>%
 
 #Use unique() fucntion and table() fucntion to check which 350 models are in the df
 ```{r}
-#unique(stockX_data$Sneaker.Name)
-#table(stockX_data$Sneaker.Name)
+unique(stockX_data$Sneaker.Name)
+table(stockX_data$Sneaker.Name)
 ```
 
 #Select relevant columns:[3]Sneaker.Name, [4]Sale.Price, [5]Retail.Price using select() function. Arrnage using arrange() function
@@ -144,6 +144,13 @@ stockX_yeezy_pd <- stockX_data %>%
 stockX_yeezy_pd$Sale.Price <- gsub("\\$|\\,", "", stockX_yeezy_pd$Sale.Price)
 stockX_yeezy_pd$Sale.Price <- as.numeric(stockX_yeezy_pd$Sale.Price)
 stockX_yeezy_pd$Order.Date <- mdy(stockX_yeezy_pd$Order.Date)
+stockX_yeezy_pd <- gsub(c(
+  "Adidas-Yeezy-Boost-350-Low-",
+  "Adidas-Yeezy-Boost-350-Low-V2-",
+  "Adidas-Yeezy-Boost-350-V2-",
+  "adidas-Yeezy-Boost-350-V2-"
+))
+
 #stockX_yeezy_pd$Sneaker.Name <- gsub("\\$|\\,", "", stockX_yeezy_pd$Sale.Price)
 ```
 
@@ -204,3 +211,4 @@ V1_graph <- ggplot(stockX_V1, aes(x = Buyer.Region, y = Sale.Price, color = Snea
 interactive_V1 <- ggplotly(V1_graph)
 interactive_V1
 ```
+
